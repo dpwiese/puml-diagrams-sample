@@ -1,0 +1,4 @@
+@startuml
+skinparam defaultFontName HelveticaNeue
+Bob -> Alice: Hello!
+@enduml
