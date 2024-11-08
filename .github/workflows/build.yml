@@ -11,12 +11,12 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Build Docker Image
       run: docker build -t plantuml-image .
 
-    - name: Run Makefile inside Docker
+    - name: Generate Diagrams
       run: |
         docker run --rm \
           -v ${{ github.workspace }}/src:/src \
@@ -25,7 +25,7 @@ jobs:
           java -DPLANTUML_LIMIT_SIZE=8192 -Djava.compiler=NONE -jar /usr/share/java/plantuml-1.2023.12.jar -o /out -quiet -tpng /src/**/*.puml
 
     - name: Upload Diagrams
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: plantuml-diagrams
         path: 'out/*.png'
