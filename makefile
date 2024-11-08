@@ -33,8 +33,30 @@ clean:
 $(OUT):
 	@mkdir -p $@
 
+ifeq ($(RUN_IN_DOCKER), 1)
+
+$(OUT)/%.png: $(SRC)/%.puml | $(OUT)
+	@docker run -it -P --net=host \
+	--platform $(PLATFORM) \
+	-v $(SRC):/src \
+	-v $(OUT):/out \
+	$(DOCKER_IMAGE) \
+	java -DPLANTUML_LIMIT_SIZE=8192 -Djava.compiler=NONE -jar /usr/share/java/plantuml-1.2023.12.jar -o /out -quiet -tpng /src/sample/$(notdir $<)
+
+$(OUT)/%.pdf: $(SRC)/%.puml | $(OUT)
+	@docker run -it -P --net=host \
+	--platform $(PLATFORM) \
+	-v $(SRC):/src \
+	-v $(OUT):/out \
+	$(DOCKER_IMAGE) \
+	java -Djava.compiler=NONE -jar /usr/share/java/plantuml-1.2023.12.jar -o /out -quiet -tpdf /src/sample/$(notdir $<)
+
+else
+
 $(OUT)/%.png: $(SRC)/%.puml | $(OUT)
 	@java -DPLANTUML_LIMIT_SIZE=8192 -Djava.compiler=NONE -jar $(PUML_JAR) -o $(dir $@) -quiet -tpng $<
 
 $(OUT)/%.pdf: $(SRC)/%.puml | $(OUT)
 	@java -Djava.compiler=NONE -jar $(PUML_JAR) -o $(dir $@) -quiet -tpdf $< &>/dev/null
+
+endif

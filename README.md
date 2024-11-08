@@ -3,7 +3,29 @@
 This repository holds the basics to facilitate a seamless, command-line-based workflow to generate [PlantUML](https://plantuml.com) diagrams from source.
 See my post [PlantUML Diagrams](https://danielwiese.com/posts/plantuml-diagrams/) for more information.
 
-## Basic Installation and Use
+## Quickstart
+
+```sh
+# Generate PNGs
+make png
+
+# Generate PDFs
+make pdf
+
+# Generate output using the command in the Docker container
+make RUN_IN_DOCKER=1 png
+
+# Remove outputs
+make clean
+
+# List installed fonts
+make fonts
+
+# Display types, parameters, color keywords
+make lang
+```
+
+## Basic Installation
 
 To install:
 

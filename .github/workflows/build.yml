@@ -1,0 +1,31 @@
+name: Generate PlantUML Diagrams
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Build Docker Image
+      run: docker build -t plantuml-image .
+
+    - name: Run Makefile inside Docker
+      run: |
+        docker run --rm \
+          -v ${{ github.workspace }}/src:/src \
+          -v ${{ github.workspace }}/out:/out \
+          plantuml-image \
+          java -DPLANTUML_LIMIT_SIZE=8192 -Djava.compiler=NONE -jar /usr/share/java/plantuml-1.2023.12.jar -o /out -quiet -tpng /src/sample/$(notdir $<)
+
+    - name: Upload Diagrams
+      uses: actions/upload-artifact@v3
+      with:
+        name: plantuml-diagrams
+        path: 'out/**/*.png'
